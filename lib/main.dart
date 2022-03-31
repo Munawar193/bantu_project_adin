@@ -3,6 +3,7 @@ import 'package:pubskuy/screen/pages/get_strated_page.dart';
 import 'package:pubskuy/screen/pages/input_page.dart';
 import 'package:pubskuy/screen/pages/login_page.dart';
 import 'package:pubskuy/screen/pages/main_menu_page.dart';
+import 'package:pubskuy/screen/pages/riwayat_page.dart';
 import 'package:pubskuy/screen/pages/singUp_page.dart';
 
 void main() {
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/singUp-page': (context) => const SignUpPage(),
         '/main-menu': (context) => const MainMenuPage(),
         '/input-page': (context) => const Inputpage(),
+        '/riwayat-page': (context) => const RiwayatPage(),
       },
     );
   }

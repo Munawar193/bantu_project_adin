@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:pubskuy/shared/theme.dart';
 
 class RiwayatCard extends StatelessWidget {
+  final Function() onTap;
   const RiwayatCard({
     Key? key,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: () {},
+        onTap: onTap,
         child: Container(
           height: 240,
           padding: const EdgeInsets.all(20),

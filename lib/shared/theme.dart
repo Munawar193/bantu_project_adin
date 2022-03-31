@@ -7,6 +7,7 @@ const Color kOrangeColor = Color(0xffFF7A30);
 const Color kWhiteColor = Color(0xffFFFFFF);
 const Color kBlackColor = Color(0xff373636);
 const Color kDarkColor = Color(0xff002043);
+const Color kCreamColor = Color(0xffDFE5DC);
 
 TextStyle blackStyle = GoogleFonts.montserrat(
   color: kBlackColor,

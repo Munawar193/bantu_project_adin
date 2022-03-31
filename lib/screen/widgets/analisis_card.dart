@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:pubskuy/shared/theme.dart';
 
 class AnalisiCard extends StatelessWidget {
+  final Function() onTap;
   const AnalisiCard({
     Key? key,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: () {
-          Navigator.pushNamed(context, '/input-page',
-              arguments: (route) => false);
-        },
+        onTap: onTap,
         child: Container(
           height: 240,
           padding: const EdgeInsets.all(20),

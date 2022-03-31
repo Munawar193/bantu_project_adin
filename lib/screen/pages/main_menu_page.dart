@@ -57,12 +57,22 @@ class _MainMenuPageState extends State<MainMenuPage> {
               margin: const EdgeInsets.only(left: 30, right: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  AnalisiCard(),
-                  SizedBox(
+                children: [
+                  AnalisiCard(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/input-page',
+                          arguments: (route) => false);
+                    },
+                  ),
+                  const SizedBox(
                     width: 15,
                   ),
-                  RiwayatCard(),
+                  RiwayatCard(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/riwayat-page',
+                          arguments: (route) => false);
+                    },
+                  ),
                 ],
               ),
             ),

@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:pubskuy/screen/widgets/custome_button.dart';
-import 'package:pubskuy/screen/widgets/custome_textfromfield.dart';
+import 'package:pubskuy/screen/widgets/riwayat_item.dart';
 import 'package:pubskuy/shared/theme.dart';
 
-class Inputpage extends StatefulWidget {
-  const Inputpage({Key? key}) : super(key: key);
+class RiwayatPage extends StatelessWidget {
+  const RiwayatPage({Key? key}) : super(key: key);
 
-  @override
-  State<Inputpage> createState() => _Inputpage();
-}
-
-class _Inputpage extends State<Inputpage> {
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-
     Widget _header() {
       return SafeArea(
         child: Container(
           margin: const EdgeInsets.only(left: 20, top: 10, right: 20),
-          width: width,
+          width: MediaQuery.of(context).size.width,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -45,44 +37,50 @@ class _Inputpage extends State<Inputpage> {
     }
 
     Widget _content() {
-      return Center(
+      return Align(
+        alignment: Alignment.bottomCenter,
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 30),
-          height: 400,
+          margin: const EdgeInsets.only(
+            top: 220,
+          ),
+          padding: const EdgeInsets.only(
+            top: 30,
+          ),
           width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: kDarkColor,
-            borderRadius: BorderRadius.circular(35),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(30),
+            ),
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                'Data daun padi',
+                'Plant History',
                 style: whiteStyle.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
-              const CustomeTextFromField(
-                text: 'Tanggal',
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: const [
+                      RiwayatItem(),
+                      RiwayatItem(),
+                      RiwayatItem(),
+                      RiwayatItem(),
+                      RiwayatItem(),
+                      RiwayatItem(),
+                    ],
+                  ),
+                ),
               ),
-              const CustomeTextFromField(
-                text: 'Luas lahan',
-              ),
-              const CustomeTextFromField(
-                text: 'Note',
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              CustomeButton(
-                title: 'save input',
-                onPressed: () {},
-              )
             ],
           ),
         ),
