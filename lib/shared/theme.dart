@@ -15,3 +15,6 @@ TextStyle blackStyle = GoogleFonts.montserrat(
 TextStyle whiteStyle = GoogleFonts.montserrat(
   color: kWhiteColor,
 );
+TextStyle greenStyle = GoogleFonts.montserrat(
+  color: kPrimeColor,
+);

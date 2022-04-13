@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pubskuy/screen/pages/output_camera.dart';
 import 'package:pubskuy/screen/widgets/custome_button.dart';
 import 'package:pubskuy/screen/widgets/custome_textfromfield.dart';
 import 'package:pubskuy/shared/theme.dart';
@@ -81,7 +82,10 @@ class _Inputpage extends State<Inputpage> {
               ),
               CustomeButton(
                 title: 'save input',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Gallery()));
+                },
               )
             ],
           ),
