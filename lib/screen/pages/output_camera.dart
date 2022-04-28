@@ -1,10 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pubskuy/screen/widgets/custome_button.dart';
 import 'package:pubskuy/shared/theme.dart';
+import 'package:http/http.dart' as http;
 
 class Gallery extends StatefulWidget {
   const Gallery({Key? key}) : super(key: key);
@@ -14,20 +13,57 @@ class Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<Gallery> {
-  File? image;
+  File? _selectedImage;
 
-  Future pickImage() async {
+  Future<http.Response> getFaceCoordinate(File file, String link) async {
+    try {
+      String filename = file.path.split('/').last;
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(link),
+      );
+      Map<String, String> headers = {"Content-type": "multipart/form-data"};
+      request.files.add(
+        http.MultipartFile(
+          'image',
+          file.readAsBytes().asStream(),
+          file.lengthSync(),
+          filename: filename,
+        ),
+      );
+      request.headers.addAll(headers);
+      var res = await request.send();
+      var response = await http.Response.fromStream(res);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> _addImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.camera);
-      if (image == null) {
-        return;
+      if (image != null) {
+        _selectedImage = File(image.path);
       }
-
-      final imageTemprorary = File(image.path);
       setState(() {
-        this.image = imageTemprorary;
+        onUploadImage();
       });
-    } on PlatformException {
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  onUploadImage() async {
+    try {
+      final res = await getFaceCoordinate(
+        File(_selectedImage!.path),
+        "http://7877-2001-448a-11ab-1595-199e-40a7-860c-334e.ngrok.io/upload",
+      );
+      debugPrint(res.body);
+
+      setState(() {});
+    } catch (e) {
       rethrow;
     }
   }
@@ -39,13 +75,13 @@ class _GalleryState extends State<Gallery> {
       body: SafeArea(
           child: Stack(
         children: [
-          image != null
+          _selectedImage != null
               ? Container(
                   height: 520,
                   width: MediaQuery.of(context).size.width,
                   color: kWhiteColor.withOpacity(0.2),
                   child: Image.file(
-                    image!,
+                    _selectedImage!,
                     width: MediaQuery.of(context).size.width,
                   ),
                 )
@@ -104,7 +140,7 @@ class _GalleryState extends State<Gallery> {
                           InformasiCard(
                             imgUrl: 'assets/images/luas_lahan.png',
                             title: 'Luas lahan',
-                            subtitle: image != null ? '400 m2' : '',
+                            subtitle: _selectedImage != null ? '400 m2' : '',
                           ),
                           const SizedBox(
                             height: 15,
@@ -112,7 +148,7 @@ class _GalleryState extends State<Gallery> {
                           InformasiCard(
                             imgUrl: 'assets/images/dosis.png',
                             title: 'Dosis pupuk',
-                            subtitle: image != null ? '7 kg' : '',
+                            subtitle: _selectedImage != null ? '7 kg' : '',
                           ),
                         ],
                       ),
@@ -122,7 +158,7 @@ class _GalleryState extends State<Gallery> {
                           InformasiCard(
                             imgUrl: 'assets/images/level.png',
                             title: 'Level',
-                            subtitle: image != null ? '1' : '',
+                            subtitle: _selectedImage != null ? '1' : '',
                           ),
                           const SizedBox(
                             height: 15,
@@ -130,7 +166,7 @@ class _GalleryState extends State<Gallery> {
                           InformasiCard(
                             imgUrl: 'assets/images/sample.png',
                             title: 'Sample',
-                            subtitle: image != null ? '1' : '',
+                            subtitle: _selectedImage != null ? '1' : '',
                           ),
                         ],
                       ),
@@ -140,7 +176,7 @@ class _GalleryState extends State<Gallery> {
                   CustomeButton(
                     title: 'Ambil gambar',
                     onPressed: () {
-                      pickImage();
+                      _addImage();
                     },
                   ),
                   const SizedBox(
