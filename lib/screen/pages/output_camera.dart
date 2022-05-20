@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pubskuy/model/proses_model.dart';
 import 'package:pubskuy/screen/widgets/custome_button.dart';
+import 'package:pubskuy/service/proses_service.dart';
 import 'package:pubskuy/shared/theme.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,9 +15,19 @@ class Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<Gallery> {
+  final ProsesAPI _prosesAPI = ProsesAPI();
+  ProsesModel? data;
+
+  final String url =
+      'https://2980-2001-448a-11ab-16f0-5cd9-2b53-82d1-1611.ap.ngrok.io';
+
+  Future<void> _getData() async {
+    data = await _prosesAPI.getProses(url);
+  }
+
   File? _selectedImage;
 
-  Future<http.Response> getFaceCoordinate(File file, String link) async {
+  Future<http.Response> getCoordinate(File file, String link) async {
     try {
       String filename = file.path.split('/').last;
       var request = http.MultipartRequest(
@@ -42,7 +54,7 @@ class _GalleryState extends State<Gallery> {
 
   Future<void> _addImage() async {
     try {
-      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image != null) {
         _selectedImage = File(image.path);
       }
@@ -56,9 +68,9 @@ class _GalleryState extends State<Gallery> {
 
   onUploadImage() async {
     try {
-      final res = await getFaceCoordinate(
+      final res = await getCoordinate(
         File(_selectedImage!.path),
-        "http://7877-2001-448a-11ab-1595-199e-40a7-860c-334e.ngrok.io/upload",
+        "$url/upload",
       );
       debugPrint(res.body);
 
@@ -130,47 +142,58 @@ class _GalleryState extends State<Gallery> {
                   const SizedBox(
                     height: 30,
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InformasiCard(
-                            imgUrl: 'assets/images/luas_lahan.png',
-                            title: 'Luas lahan',
-                            subtitle: _selectedImage != null ? '400 m2' : '',
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          InformasiCard(
-                            imgUrl: 'assets/images/dosis.png',
-                            title: 'Dosis pupuk',
-                            subtitle: _selectedImage != null ? '7 kg' : '',
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InformasiCard(
-                            imgUrl: 'assets/images/level.png',
-                            title: 'Level',
-                            subtitle: _selectedImage != null ? '1' : '',
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          InformasiCard(
-                            imgUrl: 'assets/images/sample.png',
-                            title: 'Sample',
-                            subtitle: _selectedImage != null ? '1' : '',
-                          ),
-                        ],
-                      ),
-                    ],
+                  FutureBuilder(
+                    future: _getData(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.hasData) {
+                        return const CircularProgressIndicator();
+                      } else {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InformasiCard(
+                                  imgUrl: 'assets/images/luas_lahan.png',
+                                  title: 'Luas lahan',
+                                  subtitle:
+                                      _selectedImage != null ? '400 m2' : '',
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                InformasiCard(
+                                  imgUrl: 'assets/images/dosis.png',
+                                  title: 'Dosis pupuk',
+                                  subtitle: "${data?.dosis}",
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InformasiCard(
+                                  imgUrl: 'assets/images/level.png',
+                                  title: 'Level',
+                                  subtitle: data?.pesan?.levelDaun,
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                InformasiCard(
+                                  imgUrl: 'assets/images/sample.png',
+                                  title: 'Sample',
+                                  subtitle: data?.pesan?.levelAngka,
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                   const Spacer(),
                   CustomeButton(
@@ -195,7 +218,7 @@ class _GalleryState extends State<Gallery> {
 class InformasiCard extends StatelessWidget {
   final String imgUrl;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   const InformasiCard({
     Key? key,
     required this.imgUrl,
@@ -229,7 +252,7 @@ class InformasiCard extends StatelessWidget {
               height: 5,
             ),
             Text(
-              subtitle,
+              subtitle.toString(),
               style: blackStyle.copyWith(
                 fontWeight: FontWeight.w700,
               ),
